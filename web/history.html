@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- videojs official CDN -->
+    <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+    <link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+    <!-- about videojs plugin with npm -->
+    <script src="node_modules/video.js/dist/video.min.js"></script>
+    <script src="node_modules/videojs-marker-plugin/dist/videojs-marker-plugin.min.js"></script>
+    <link
+      href="node_modules/videojs-marker-plugin/dist/videojs-marker-plugin.css"
+      rel="stylesheet"
+    />
+    <!-- axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+    <title>Historical Record</title>
+    <style>
+      .custom-container {
+        max-width: 600px;
+      }
+
+      .custom-modal {
+        max-width: 1300px;
+      }
+
+      .custom-time-range {
+        position: absolute;
+        background: rgba(30, 144, 255, 1);
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Simple Streaming</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="live.html">Live Screen</a>
+            <a class="nav-link" href="history.html">Historical Record</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <br />
+
+    <div class="container custom-container">
+      <h2>錄影查詢</h2>
+      <label for="datePicker">選擇日期：</label>
+      <input type="date" id="datePicker" />
+      <button type="button" onclick="queryRecording()">查詢</button>
+      <label id="warning" class="text-danger fw-bold"></label>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>影片名稱</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- show video modal -->
+    <div
+      class="modal fade"
+      id="show"
+      tabindex="-1"
+      aria-labelledby="show"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered custom-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">歷史查詢</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div id="modal-body" class="modal-body">
+            <video id="modalVideo" class="video-js"></video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <footer class="py-3 my-4 fixed-bottom">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
+      <p class="text-center text-muted">
+        &copy; 2024 Department of Information and Communication
+      </p>
+    </footer> -->
+  </body>
+
+  <script>
+    // 使用 axios 時，不使用 cache
+    const axiosConfig = {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    };
+
+    const modalPlayer = videojs("modalVideo", {
+      controls: true,
+      preload: "auto",
+      width: "960",
+      height: "540",
+      muted: true,
+      autoplay: true,
+    });
+
+    function queryRecording() {
+      const datePicker = document.getElementById("datePicker").value;
+      const tbody = document.getElementById("tbody");
+      const warning = document.getElementById("warning");
+
+      // 取得年份與月份
+      const dateObject = new Date(datePicker);
+      let year = dateObject.getFullYear();
+      let month = dateObject.getMonth() + 1;
+      if (month < 10) {
+        month = `0${month}`;
+      }
+
+      // 避免重複 tr、td
+      while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+      }
+
+      axios.get(`./php/queryRecording.php?date=${datePicker}`).then((res) => {
+        const { data } = res;
+        warning.textContent = "";
+
+        if (data == "null_value") {
+          warning.textContent = " * 請選擇日期";
+        } else {
+          if (data.length != 0) {
+            for (i = 0; i < data.length; i++) {
+              const tr = document.createElement("tr");
+              const td = document.createElement("td");
+              const fileName = data[i];
+
+              td.textContent = fileName;
+              td.setAttribute("data-bs-toggle", "modal");
+              td.setAttribute("data-bs-target", "#show");
+              tr.appendChild(td);
+              tbody.appendChild(tr);
+
+              tr.onclick = function () {
+                modalPlayer.src({
+                  type: "video/mp4",
+                  src: `../mp4/detect/${year}/${month}/` + fileName,
+                });
+                let plugin = modalPlayer.markerPlugin({ panel: true });
+                marker(fileName, year, plugin);
+              };
+            }
+          } else {
+            const tr = document.createElement("tr");
+            const td = document.createElement("td");
+            td.textContent = "當日無影片";
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+          }
+        }
+      });
+    }
+
+    function marker(fileName, year, plugin) {
+      const fileNameWithoutExtension = fileName
+        .split(".")
+        .slice(0, -1)
+        .join(".");
+      const newExtension = "json";
+      const newFileName = `${fileNameWithoutExtension}.${newExtension}`;
+
+      axios
+        .get(`../mp4/detect/${year}/json/${newFileName}`, axiosConfig)
+        .then((res) => {
+          const { data } = res;
+          const markers = [];
+
+          for (let i = 0; i < data.length; i++) {
+            const marker = {
+              offset: data[i].start_sec,
+              type: "text",
+              data: {
+                content: data[i].id,
+              },
+            };
+            markers.push(marker);
+            timeLine(data[i].start_sec, data[i].end_sec, data[i].duration);
+          }
+
+          plugin.updateOptions({
+            markers: markers,
+            panel: true,
+          });
+        });
+    }
+
+    function timeLine(startTime, endTime, duration) {
+      const customTimeRange = document.createElement("div");
+      customTimeRange.className = "custom-time-range";
+      document
+        .querySelector(".vjs-progress-holder")
+        .appendChild(customTimeRange);
+
+      // 計算開始時間和結束時間在時間軸上的百分比位置
+      const startPercentage = (startTime / duration) * 100;
+      const endPercentage = (endTime / duration) * 100;
+      customTimeRange.style.left = startPercentage + "%";
+      customTimeRange.style.width = endPercentage - startPercentage + "%";
+    }
+
+    // 當 show modal 被關閉時，將會觸發此事件
+    const show = document.getElementById("show");
+    show.addEventListener("hidden.bs.modal", () => {
+      const div = document.querySelectorAll(".custom-time-range"); // 選取所有具有 custom-time-range 類別的元素
+      div.forEach((item) => item.remove());                        // 迭代並刪除每個元素
+    });
+  </script>
+</html>

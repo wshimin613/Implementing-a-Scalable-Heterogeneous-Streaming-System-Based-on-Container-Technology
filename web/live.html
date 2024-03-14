@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+    <title>Monitor</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Simple Streaming</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="live.html">Live Screen</a>
+            <a class="nav-link" href="history.html">Historical Record</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <br />
+    <div id="streams-container" class="container-fluid text-center"></div>
+    <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+    
+    <!-- <footer class="py-3 my-4 fixed-bottom">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
+      <p class="text-center text-muted">
+        &copy; 2024 Department of Information and Communication
+      </p>
+    </footer> -->
+  </body>
+
+  <script>
+    window.onload = showStream();
+
+    async function showStream() {
+      const response = await axios.get(`./php/init.php`);
+      const data = response.data;
+      const streamsContainer = document.getElementById("streams-container");
+      const newRow = document.createElement("div");
+      newRow.className = "row";
+
+      for (let i = 0; i < data.length; i++) {
+        const newCol = document.createElement("div");
+        newCol.className = "col";
+
+        const newCard = document.createElement("div");
+        newCard.className = "card";
+
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header";
+        cardHeader.innerHTML = "串流名稱：" + data[i].streamName + "&nbsp;&nbsp;&nbsp;&nbsp;攝影機：" + data[i].cameraName;
+
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+
+        const videoElement = document.createElement("video");
+        videoElement.id = "my-video-" + data[i].streamName;
+        videoElement.className = "video-js";
+        videoElement.controls = true;
+        videoElement.preload = "auto";
+        videoElement.width = 854;
+        videoElement.height = 480;
+        videoElement.muted = true;
+        videoElement.autoplay = true;
+        videoElement.setAttribute("data-setup", '{}');
+
+        const videoSource = document.createElement("source");
+        videoSource.src = "../mp4/hls/" + data[i].streamName + ".m3u8";
+        videoSource.type = "application/x-mpegURL";
+
+        videoElement.appendChild(videoSource);
+        cardBody.appendChild(videoElement);
+        newCard.appendChild(cardHeader);
+        newCard.appendChild(cardBody);
+        newCol.appendChild(newCard);
+        newRow.appendChild(newCol);
+        streamsContainer.appendChild(newRow);
+
+        videojs("my-video-" + data[i].streamName);
+      }
+    }
+  </script>
+</html>
+
+
+<!-- <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-header">串流名稱：stream_1</div>
+            <div class="card-body">
+              <video
+              liveui="true"
+                id="my-video"
+                class="video-js"
+                controls
+                preload="auto"
+                width="854"
+                height="480"
+                muted
+                autoplay
+                data-setup='{}'
+              >
+                <source src="/mp4/hls/aaa.m3u8" type="application/x-mpegURL" />                
+              </video>
+            </div>
+          </div>
+        </div>
+      </div> -->

@@ -1,0 +1,6 @@
+.htaccess
+.htpasswd
+mp4/record/
+mp4/detect/
+mp4/hls/
+web/node_modules/

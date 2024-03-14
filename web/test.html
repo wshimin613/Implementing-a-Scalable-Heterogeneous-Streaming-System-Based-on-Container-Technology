@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+    <link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+    <title>Document</title>
+
+    <style>
+      /* 自定義時間軸的樣式 */
+      /* .vjs-progress-holder {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      } */
+
+      /* .vjs-play-progress {
+        background-color: rgba(255, 255, 255, 1) !important;
+      } */
+
+      /* .custom-time-range {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(30, 144, 255, 1);
+        width: 0.3em;
+        height: 0.3em;
+        left: -0.15em;
+        border-radius: 0.3em;
+      } */
+
+      .custom-time-range {
+        position: absolute;
+        background: rgba(30, 144, 255, 1);
+        /* width: 0.3em; */
+        height: 0.3em;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Simple Streaming</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="live.html">Live Screen</a>
+            <a class="nav-link" href="history.html">Historical Record</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <video id="demo" class="video-js">
+      <source
+        src="../mp4/detect/2024/02/aaa-2024-02-26_152425.mp4"
+        type="video/mp4"
+      />
+    </video>
+  </body>
+
+  <script>
+    const player = videojs("demo", {
+      controls: true,
+      preload: "auto",
+      width: "960",
+      height: "540",
+      muted: true,
+      autoplay: true,
+    });
+
+    window.onload = aaa;
+    function aaa() {
+      const startTime = [2, 8];
+      const endTime = [4, 10];
+      for (let i = 0; i < startTime.length; i++) {
+        addClass(startTime[i], endTime[i]);
+      }
+    }
+
+    function addClass(startTime, endTime) {
+      const customTimeRange = document.createElement("div");
+      customTimeRange.className = "custom-time-range";
+      document
+        .querySelector(".vjs-progress-holder")
+        .appendChild(customTimeRange);
+      // 計算開始時間和結束時間在時間軸上的百分比位置
+      const startPercentage = (startTime / player.duration()) * 100;
+      const endPercentage = (endTime / player.duration()) * 100;
+
+      console.log(startPercentage);
+      console.log(endPercentage);
+      
+      customTimeRange.style.left = startPercentage + "%";
+      customTimeRange.style.width = endPercentage - startPercentage + "%";
+    }
+  </script>
+</html>

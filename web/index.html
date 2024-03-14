@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <!-- jquery ip plugin -->
+    <link rel="stylesheet" href="./js/src/ipInput.css" />
+    <script src="./js/src/ipInput.js"></script>
+    <title>Simple Streaming</title>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Simple Streaming</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="live.html">Live Screen</a>
+            <a class="nav-link" href="history.html">Historical Record</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <br />
+
+    <div class="container">
+      <!-- 分頁 -->
+      <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="home-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#first"
+            type="button"
+            role="tab"
+            aria-controls="home"
+            aria-selected="true"
+            onclick="location.reload(true);"
+          >
+            串流監控
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="profile-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#second"
+            type="button"
+            role="tab"
+            aria-controls="profile"
+            aria-selected="false"
+            onclick="loadCamera()"
+          >
+            攝影機資訊
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        <!-- first pages -->
+        <div
+          class="tab-pane fade show active"
+          id="first"
+          role="tabpanel"
+          aria-labelledby="home-tab"
+        >
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="col-3" scope="col">串流名稱</th>
+                <th class="col-3" scope="col">IPcam</th>
+                <th class="col-3" scope="col">目前狀態</th>
+                <th class="col-3" scope="col">選項</th>
+              </tr>
+            </thead>
+            <form method="post">
+              <tbody id="table-body"></tbody>
+            </form>
+          </table>
+
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button
+              type="button"
+              class="btn btn-outline-dark"
+              onclick="add_row()"
+            >
+              新增
+            </button>
+          </div>
+        </div>
+
+        <!-- second pages -->
+        <div
+          class="tab-pane fade"
+          id="second"
+          role="tabpanel"
+          aria-labelledby="profile-tab"
+        >
+          <!-- 新增攝影機 Modal -->
+          <div
+            class="modal fade"
+            id="addModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    新增 IP camera
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label"
+                      >請輸入您的攝影機名稱：</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="camName"
+                      placeholder="ex: Stream_1 ..."
+                      maxlength="10"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput2" class="form-label"
+                      >請輸入 IP 位址：</label
+                    >
+                    <div id="camIP"></div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput3" class="form-label">
+                      請指定 container 的 IP 位址：</label
+                    >
+                    <div class="input-group">
+                      <div class="input-group-text"> 192 . 168 . 3 . </div>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="containerIP"
+                        placeholder="ex: 1 ~ 254"
+                        min="1"
+                        max="254"
+                      />
+                    </div>
+                  </div>
+                  <div id="nullValueDiv"></div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    id="addButton1"
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="addCamera()"
+                  >
+                    新增
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 刪除攝影機 Modal -->
+          <div
+            class="modal fade"
+            id="delModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">刪除攝影機</h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div id="modal-delCam" class="modal-body"></div>
+                <div class="modal-footer">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="footerButton"
+                    onclick="delCamera()"
+                  >
+                    刪除
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 修改攝影機 Modal -->
+          <div
+            class="modal fade"
+            id="modifyModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    修改 IP camera
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label"
+                      >修改您的攝影機名稱：</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="modifycamName"
+                      placeholder="ex: Stream_1..."
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput2" class="form-label"
+                      >修改 IP 位址：</label
+                    >
+                    <div id="modifycamIP"></div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput3" class="form-label">
+                      修改 container 的 IP 位址：</label
+                    >
+
+                    <div class="input-group">
+                      <div class="input-group-text">192 . 168 . 3 .</div>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="modifycontainerIP"
+                        placeholder="ex: 1 ~ 254"
+                        min="1"
+                        max="254"
+                      />
+                    </div>
+                  </div>
+                  <div id="nullValueDiv2"></div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="modifyButton1"
+                    onclick="modifyCamera()"
+                  >
+                    修改
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">IPcam 名稱</th>
+                <th scope="col">IP Address</th>
+                <th scope="col">Container IP</th>
+                <th scope="col">網路連接</th>
+                <th scope="col">目前狀態</th>
+                <th scope="col">選項</th>
+              </tr>
+            </thead>
+            <tbody id="table-camera"></tbody>
+          </table>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button
+              type="button"
+              class="btn btn-outline-dark"
+              data-bs-toggle="modal"
+              data-bs-target="#addModal"
+            >
+              新增
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <footer class="py-3 my-4 fixed-bottom">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
+      <p class="text-center text-muted">
+        &copy; 2024 Department of Information and Communication
+      </p>
+    </footer> -->
+  </body>
+
+  <script>
+    // 使用 jQuery plugin 定義 ip 格式
+    let camIPDiv = $("#camIP").ipInput();
+    let modifycamIPDiv = $("#modifycamIP").ipInput();
+
+    // 當新增 IPcam 的 modal 被關閉時，將會觸發此事件
+    const addModal = document.getElementById("addModal");
+    addModal.addEventListener("hidden.bs.modal", function (event) {
+      const nullValueDiv = document.getElementById("nullValueDiv");
+      nullValueDiv.classList.remove("alert", "alert-danger");
+      nullValueDiv.textContent = "";
+
+      document.getElementById("camName").value = "";
+      document.getElementById("containerIP").value = "";
+
+      const parentElement = document.getElementById("camIP");
+      const childElements = parentElement.getElementsByTagName("input");
+      for (var i = 0; i < childElements.length; i++) {
+        childElements[i].value = "";
+      }
+    });
+
+    // 當修改 IPcam 的 modal 被關閉時，將會觸發此事件
+    const modifyModal = document.getElementById("modifyModal");
+    modifyModal.addEventListener("hidden.bs.modal", function (event) {
+      const nullValueDiv = document.getElementById("nullValueDiv2");
+      nullValueDiv.classList.remove("alert", "alert-danger");
+      nullValueDiv.textContent = "";
+    });
+  </script>
+
+  <script src="js/init.js"></script>
+  <script src="js/row.js"></script>
+  <script src="js/stream.js"></script>
+  <script src="js/camera.js"></script>
+</html>
+
+<!-- const counter = tbody.childElementCount + 1; -->
