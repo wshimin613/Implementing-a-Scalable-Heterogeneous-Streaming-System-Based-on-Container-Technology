@@ -64,10 +64,11 @@
     </nav>
 
     <video id="demo" class="video-js">
-      <source
-        src="../mp4/detect/2024/02/aaa-2024-02-26_152425.mp4"
-        type="video/mp4"
-      />
+      <source src="../mp4/detect/2024/03/test.mp4" type="video/mp4" />
+    </video>
+
+    <video id="demo2" class="video-js">
+      <source src="../mp4/detect/2024/03/qsv1.mp4" type="video/mp4" />
     </video>
   </body>
 
@@ -75,36 +76,45 @@
     const player = videojs("demo", {
       controls: true,
       preload: "auto",
-      width: "960",
-      height: "540",
+      width: "854",
+      height: "480",
       muted: true,
       autoplay: true,
     });
 
-    window.onload = aaa;
-    function aaa() {
-      const startTime = [2, 8];
-      const endTime = [4, 10];
-      for (let i = 0; i < startTime.length; i++) {
-        addClass(startTime[i], endTime[i]);
-      }
-    }
+    const player2 = videojs("demo2", {
+      controls: true,
+      preload: "auto",
+      width: "854",
+      height: "480",
+      muted: true,
+      autoplay: true,
+    });
 
-    function addClass(startTime, endTime) {
-      const customTimeRange = document.createElement("div");
-      customTimeRange.className = "custom-time-range";
-      document
-        .querySelector(".vjs-progress-holder")
-        .appendChild(customTimeRange);
-      // 計算開始時間和結束時間在時間軸上的百分比位置
-      const startPercentage = (startTime / player.duration()) * 100;
-      const endPercentage = (endTime / player.duration()) * 100;
+    // window.onload = aaa;
+    // function aaa() {
+    //   const startTime = [2, 8];
+    //   const endTime = [4, 10];
+    //   for (let i = 0; i < startTime.length; i++) {
+    //     addClass(startTime[i], endTime[i]);
+    //   }
+    // }
 
-      console.log(startPercentage);
-      console.log(endPercentage);
-      
-      customTimeRange.style.left = startPercentage + "%";
-      customTimeRange.style.width = endPercentage - startPercentage + "%";
-    }
+    // function addClass(startTime, endTime) {
+    //   const customTimeRange = document.createElement("div");
+    //   customTimeRange.className = "custom-time-range";
+    //   document
+    //     .querySelector(".vjs-progress-holder")
+    //     .appendChild(customTimeRange);
+    //   // 計算開始時間和結束時間在時間軸上的百分比位置
+    //   const startPercentage = (startTime / player.duration()) * 100;
+    //   const endPercentage = (endTime / player.duration()) * 100;
+
+    //   console.log(startPercentage);
+    //   console.log(endPercentage);
+
+    //   customTimeRange.style.left = startPercentage + "%";
+    //   customTimeRange.style.width = endPercentage - startPercentage + "%";
+    // }
   </script>
 </html>

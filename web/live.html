@@ -34,7 +34,7 @@
     <br />
     <div id="streams-container" class="container-fluid text-center"></div>
     <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
-    
+
     <!-- <footer class="py-3 my-4 fixed-bottom">
       <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
       <p class="text-center text-muted">
@@ -54,48 +54,53 @@
       newRow.className = "row";
 
       for (let i = 0; i < data.length; i++) {
-        const newCol = document.createElement("div");
-        newCol.className = "col";
+        if (data[i].action != "disconnect") {
+          const newCol = document.createElement("div");
+          newCol.className = "col";
 
-        const newCard = document.createElement("div");
-        newCard.className = "card";
+          const newCard = document.createElement("div");
+          newCard.className = "card";
 
-        const cardHeader = document.createElement("div");
-        cardHeader.className = "card-header";
-        cardHeader.innerHTML = "串流名稱：" + data[i].streamName + "&nbsp;&nbsp;&nbsp;&nbsp;攝影機：" + data[i].cameraName;
+          const cardHeader = document.createElement("div");
+          cardHeader.className = "card-header";
+          cardHeader.innerHTML =
+            "串流名稱：" +
+            data[i].streamName +
+            "&nbsp;&nbsp;&nbsp;&nbsp;攝影機：" +
+            data[i].cameraName;
 
-        const cardBody = document.createElement("div");
-        cardBody.className = "card-body";
+          const cardBody = document.createElement("div");
+          cardBody.className = "card-body";
 
-        const videoElement = document.createElement("video");
-        videoElement.id = "my-video-" + data[i].streamName;
-        videoElement.className = "video-js";
-        videoElement.controls = true;
-        videoElement.preload = "auto";
-        videoElement.width = 854;
-        videoElement.height = 480;
-        videoElement.muted = true;
-        videoElement.autoplay = true;
-        videoElement.setAttribute("data-setup", '{}');
+          const videoElement = document.createElement("video");
+          videoElement.id = "my-video-" + data[i].streamName;
+          videoElement.className = "video-js";
+          videoElement.controls = true;
+          videoElement.preload = "auto";
+          videoElement.width = 854;
+          videoElement.height = 480;
+          videoElement.muted = true;
+          videoElement.autoplay = true;
+          videoElement.setAttribute("data-setup", "{}");
 
-        const videoSource = document.createElement("source");
-        videoSource.src = "../mp4/hls/" + data[i].streamName + ".m3u8";
-        videoSource.type = "application/x-mpegURL";
+          const videoSource = document.createElement("source");
+          videoSource.src = "../mp4/hls/" + data[i].streamName + ".m3u8";
+          videoSource.type = "application/x-mpegURL";
 
-        videoElement.appendChild(videoSource);
-        cardBody.appendChild(videoElement);
-        newCard.appendChild(cardHeader);
-        newCard.appendChild(cardBody);
-        newCol.appendChild(newCard);
-        newRow.appendChild(newCol);
-        streamsContainer.appendChild(newRow);
+          videoElement.appendChild(videoSource);
+          cardBody.appendChild(videoElement);
+          newCard.appendChild(cardHeader);
+          newCard.appendChild(cardBody);
+          newCol.appendChild(newCard);
+          newRow.appendChild(newCol);
+          streamsContainer.appendChild(newRow);
 
-        videojs("my-video-" + data[i].streamName);
+          videojs("my-video-" + data[i].streamName);
+        }
       }
     }
   </script>
 </html>
-
 
 <!-- <div class="row">
         <div class="col">

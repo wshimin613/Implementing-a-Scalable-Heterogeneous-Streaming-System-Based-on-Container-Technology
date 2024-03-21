@@ -42,6 +42,8 @@ function progress(state, id) {
     buttonId = "addButton";
   } else if (state == "modify") {
     buttonId = "modifyButton";
+  } else if (state == "restore") {
+    buttonId = "restoreButton";
   } else {
     buttonId = null;
   }
@@ -53,4 +55,17 @@ function progress(state, id) {
 
 function showStream() {
   window.location.href = "live.html";
+}
+
+function restoreStream(streamName, containerIP) {
+  progress("restore", containerIP);
+  axios
+    .get(
+      `./php/restoreStream.php?streamName=${streamName}&containerIP=${containerIP}`
+    )
+    .then((res) => {
+      const { data } = res;
+      console.log(data);
+      init();
+    });
 }

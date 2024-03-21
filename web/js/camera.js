@@ -49,7 +49,7 @@ function loadCamera() {
 function addCamera() {
   const camName = document.getElementById("camName").value;
   const camIP = camIPDiv.getIp();
-  const containerIP = document.getElementById("containerIP").value;
+  const containerIP = parseInt(document.getElementById("containerIP").value);
   const nullValueDiv = document.getElementById("nullValueDiv");
   const addButton1 = document.getElementById("addButton1");
 

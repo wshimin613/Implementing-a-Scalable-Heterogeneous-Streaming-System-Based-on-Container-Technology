@@ -14,6 +14,13 @@ function init() {
     for (let i = 0; i < data.length; i++) {
       const newRow = document.createElement("tr");
 
+      let buttonElement;
+      if (data[i].action == "disconnect") {
+        buttonElement = `<button type="button" id="restoreButton${data[i].container_ip}" class="btn btn-outline-dark" onclick="restoreStream('${data[i].streamName}','${data[i].container_ip}')">恢復串流</button>`;
+      } else {
+        buttonElement = `<button type="button" class="btn btn-outline-primary" onclick="showStream()">顯示畫面</button>`;
+      }
+
       newRow.id = `row${uniqueId}`;
       newRow.innerHTML = `
           <td class="col-3">
@@ -30,7 +37,7 @@ function init() {
           </td>
           <td class="col-3">${data[i].action}</td>
           <td class="col-3">
-            <button type="button" class="btn btn-outline-primary" onclick="showStream()">顯示畫面</button>
+            ${buttonElement}
             <button type="button" id="delButton${data[i].container_ip}" class="btn btn-outline-danger" onclick="delStream(${data[i].container_ip})">結束串流</button>
           </td>
       `;

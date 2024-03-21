@@ -20,7 +20,11 @@ if [[ ${LB_status} -eq 0 && ${app1_status} -eq 0 && ${app2_status} -eq 0 ]];then
 
 	if [[ ${rtmp} == 'success' ]];then
         	IPcam=$( IPcam ${cpuset} ${stream_name} ${stream_ip} ${container_ip} )
-        	echo ${IPcam}
+		if [[ ${IPcam} == 'success' ]];then
+			echo "Successfully pushed ${stream_name}"
+		else
+			echo "function IPcam error"
+		fi
 	else
 		echo ${rtmp}
         fi

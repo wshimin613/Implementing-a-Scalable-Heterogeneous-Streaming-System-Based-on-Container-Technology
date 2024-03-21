@@ -118,12 +118,12 @@ function IPcam(){
     if [[ -n ${encoder} && ${encoder} == 'h264' ]];then
         ${podman_cmd} -c:v copy -an ${ffmpeg_options} -f flv rtmp://192.168.3.${container_ip}:1935/live/${stream_name} &> /dev/null
         mysql -u root -pdic2727175 -D stream -e "UPDATE camera SET stream_name='${stream_name}', action='running' WHERE container_ip='${container_ip}';"
-        echo "Successfully pushed ${stream_name}"
+        echo "success"
     elif [[ -z ${encoder} ]];then
         echo 'function IPcam error'
     else
         ${podman_cmd} -c:v libx264 -an ${ffmpeg_options} -f flv rtmp://192.168.3.${container_ip}:1935/live/${stream_name} &> /dev/null
     	mysql -u root -pdic2727175 -D stream -e "UPDATE camera SET stream_name='${stream_name}', action='running' WHERE container_ip='${container_ip}';"
-        echo "Successfully pushed ${stream_name} and recoded to h264"
+        echo "success"
     fi
 }
