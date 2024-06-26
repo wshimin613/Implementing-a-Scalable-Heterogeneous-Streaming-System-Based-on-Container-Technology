@@ -19,21 +19,21 @@ fps = cap.get(cv2.CAP_PROP_FPS)
 cap.release()
 
 # Execute predict
-results = model.predict(src, imgsz=320, conf=0.6, classes=0, device='cpu', project='/mnt', name='detect', save=True)
+results = model.predict(src, imgsz=320, conf=0.5, classes=0, device='cpu', project='/mnt', name='detect', save=True)
 
 # define
 detection_info = []
 current_person = None
 counter = 0
 total_frames = len(results)
-duration = round(total_frames / fps, 2)
+duration = total_frames / fps
 
 for index, r in enumerate(results):
     current_frame = index + 1
     # Check if someone exist
     if r.boxes.cls.size(0) > 0:
         if current_person is None:
-            start_sec = round(current_frame / fps, 2)
+            start_sec = current_frame / fps
             current_person = f"detect{counter + 1}"
             print(current_person)
             print(f"start_sec: {start_sec}")
@@ -48,14 +48,14 @@ for index, r in enumerate(results):
         # Check if it's the last frame
         else:
             if current_frame == total_frames:
-                end_sec = round(current_frame / fps, 2)
+                end_sec = current_frame / fps
                 print(f"end_sec: {end_sec}")
                 detection_info[-1]["end_sec"] = end_sec
 
     # Check if someone doesn't exist
     else:
         if current_person is not None:
-            end_sec = round((current_frame - 1) / fps, 2)
+            end_sec = (current_frame - 1) / fps
             print(f"end_sec: {end_sec}")
             detection_info[-1]["end_sec"] = end_sec
             current_person = None

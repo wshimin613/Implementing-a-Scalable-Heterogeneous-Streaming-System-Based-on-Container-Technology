@@ -26,6 +26,17 @@
     <link rel="stylesheet" href="./js/src/ipInput.css" />
     <script src="./js/src/ipInput.js"></script>
     <title>Simple Streaming</title>
+
+    <style>
+      .nav-tabs .nav-link {
+        color: #000000;
+        background-color: #F5F5F5;
+      }
+      .nav-tabs .nav-link.active {
+        color: #000000;
+        background-color: #D1E8FF; 
+      }
+  </style>
   </head>
 
   <body>
@@ -45,7 +56,7 @@
 
     <div class="container">
       <!-- 分頁 -->
-      <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+      <ul class="nav nav-tabs  nav-fill" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <button
             class="nav-link active"
@@ -164,7 +175,7 @@
                       請指定 container 的 IP 位址：</label
                     >
                     <div class="input-group">
-                      <div class="input-group-text"> 192 . 168 . 3 . </div>
+                      <div class="input-group-text">192 . 168 . 3 .</div>
                       <input
                         type="number"
                         class="form-control"
@@ -172,6 +183,7 @@
                         placeholder="ex: 1 ~ 254"
                         min="1"
                         max="254"
+                        disabled
                       />
                     </div>
                   </div>
@@ -317,6 +329,7 @@
               class="btn btn-outline-dark"
               data-bs-toggle="modal"
               data-bs-target="#addModal"
+              onclick="addContainerIP()"
             >
               新增
             </button>
@@ -334,6 +347,15 @@
   </body>
 
   <script>
+    // 自動填入 Container IP
+    function addContainerIP() {
+      const containerIP = document.getElementById("containerIP");
+      axios.get(`./php/addContainerIP.php`).then((res) => {
+        const { data } = res;
+        containerIP.value = data;
+      });
+    }
+
     // 使用 jQuery plugin 定義 ip 格式
     let camIPDiv = $("#camIP").ipInput();
     let modifycamIPDiv = $("#modifycamIP").ipInput();

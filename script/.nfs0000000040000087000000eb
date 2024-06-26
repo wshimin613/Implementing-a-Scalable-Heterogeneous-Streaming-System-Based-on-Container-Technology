@@ -4,9 +4,9 @@ data=($( mysql -u root -pdic2727175 -D stream -e "select ip from camera;" -B -N 
 
 for ip in ${data[@]}
 do
-	ffprobe -rtsp_transport tcp -show_streams -i "rtsp://admin:Dic2727175@${ip}:554/1/h264major" -v quiet &> /dev/null; a=$?
-	ffprobe -rtsp_transport tcp -show_streams -i "rtsp://admin:Dic2727175@${ip}:554/stream0"      -v quiet &> /dev/null; b=$?
-	ffprobe -rtsp_transport tcp -show_streams -i "rtsp://admin:Dic2727175@${ip}:554/live/ch00_1" -v quiet &> /dev/null; c=$?
+	ffprobe -show_streams -i "rtsp://admin:Dic2727175@${ip}:554/1/h264major" -v quiet &> /dev/null; a=$?
+	ffprobe -show_streams -i "rtsp://admin:Dic2727175@${ip}:80/stream0"      -v quiet &> /dev/null; b=$?
+	ffprobe -show_streams -i "rtsp://admin:Dic2727175@${ip}:554/live/ch00_1" -v quiet &> /dev/null; c=$?
 
 	if [[ ${a} -eq 0 ]] || [[ ${b} -eq 0 ]] || [[ ${c} -eq 0 ]];then
 		echo "${ip} ok"

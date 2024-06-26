@@ -17,6 +17,8 @@ do
     [[ -n $skip ]] || array+=("$i")
 done
 
+echo ${array[@]}
+
 if [[ ${#array[@]} != 0 ]];then
     echo "要處理的影片: ${array[@]}"
     i=1 # flag
@@ -54,4 +56,3 @@ if [[ ${#array[@]} != 0 ]];then
 else
     echo '影片皆已處理完畢'
 fi
-
