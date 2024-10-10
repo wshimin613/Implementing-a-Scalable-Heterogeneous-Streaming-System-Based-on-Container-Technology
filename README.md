@@ -18,9 +18,11 @@
 ## 專案架構
 採用水平擴充的方式建立叢集伺服器（Cluster Servers），並對其運作方法進行改進。將應用程式和服務打包並部署成容器運行，這樣有助於降低服務之間的耦合性，減少服務和模組之間的依賴程度，使系統能夠更準確的針對資源消耗較大的服務進行彈性擴充，從而實現微服務架構。
 
-<img src="https://github.com/wshimin613/Implementing-a-Scalable-Heterogeneous-Streaming-System-Based-on-Container-Technology/assets/83169038/cb874402-1fca-446d-a7c7-4b5f3a828c52" alt="system" width="500"/>
+| 系統架構圖 | 軟體架構圖 |
+| --- | --- |
+| <img src="https://github.com/wshimin613/Implementing-a-Scalable-Heterogeneous-Streaming-System-Based-on-Container-Technology/assets/83169038/cb874402-1fca-446d-a7c7-4b5f3a828c52" alt="system"/> | ![software](https://github.com/user-attachments/assets/20f2f7ee-e8da-4afd-878b-1ce9b5ee857d) |
 
-## Demo
+## Demo圖片
 
 | 網路攝影機管理介面 | 串流監控介面 |
 | --- | --- |
@@ -32,7 +34,7 @@
 
 ## Environment
 * Operating System: Rocky Linux 9.2
-* Cluster Architecture: Three Node servers and one storage server.
+* Cluster Architecture: One master server, three node servers, and one storage server.
 
 ## Tools
 * podman
